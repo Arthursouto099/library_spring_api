@@ -4,7 +4,6 @@ import com.simplifica.library.entities.User;
 import com.simplifica.library.exceptions.ResourceNotFoundException;
 import com.simplifica.library.exceptions.UnauthorizedResourceException;
 import com.simplifica.library.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;

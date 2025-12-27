@@ -1,4 +1,4 @@
-package com.simplifica.library.dtos.user;
+package com.simplifica.library.dtos.user.responses;
 
 import com.simplifica.library.entities.User;
 
