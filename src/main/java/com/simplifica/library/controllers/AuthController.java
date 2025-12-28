@@ -3,12 +3,14 @@ import com.simplifica.library.config.authentication.TokenConfig;
 import com.simplifica.library.dtos.user.requests.UserRequestCreateDTO;
 import com.simplifica.library.dtos.user.responses.UserResponseDTO;
 import com.simplifica.library.dtos.user.requests.UserSignRequest;
-import com.simplifica.library.dtos.user.responses.UserSignResponse;
 import com.simplifica.library.entities.User;
 import com.simplifica.library.exceptions.UnauthorizedResourceException;
 import com.simplifica.library.services.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Duration;
 
 @RestController
 public class AuthController {
@@ -46,19 +50,46 @@ public class AuthController {
                 .body(UserResponseDTO.fromEntity(user));
     }
 
+    @PostMapping("/logout")
+    public  ResponseEntity<Void> logout(HttpServletResponse res) {
+
+        ResponseCookie cookie = ResponseCookie.from("access_token", "")
+                          .httpOnly(true)
+                          .sameSite("None")
+                          .secure(false)
+                          .path("/")
+                          .maxAge(0)
+                          .build();
+
+        res.addHeader(HttpHeaders.SET_COOKIE,cookie.toString());
+        return  ResponseEntity.noContent().build();
+    }
+
 
     @PostMapping("/sign")
-    public  ResponseEntity<UserSignResponse> signUser(@Valid @RequestBody UserSignRequest req) {
+    public  ResponseEntity<UserResponseDTO> signUser(@Valid @RequestBody UserSignRequest req, HttpServletResponse res) {
         // Authenticação com email e senha.
         try {
             UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(req.email(), req.password());
             Authentication authentication = authenticationManager.authenticate(userAndPass);
 
             User user = (User) authentication.getPrincipal();
+            // gero meu token com as informações do user authenticado
             String token = tokenConfig.generateToken(user);
 
+            ResponseCookie cookie = ResponseCookie.from("access_token", token)
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .sameSite("None")
+                    //Deve obedecer o mesmo tempo do meu jwtToken
+                    .maxAge(Duration.ofHours(TokenConfig.getJWTExpiresHours()))
+                    .build();
+
+            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
             return  ResponseEntity
-                    .status(HttpStatus.OK).body(new UserSignResponse(token));
+                    .status(HttpStatus.OK).body(UserResponseDTO.fromEntity(user));
         }
         catch (AuthenticationException ex) {
             throw  new UnauthorizedResourceException("Credenciais Inválidas");

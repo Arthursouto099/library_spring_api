@@ -16,6 +16,7 @@ public class AuthConfig  implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    // busca o user pelo email<username>
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(username));
