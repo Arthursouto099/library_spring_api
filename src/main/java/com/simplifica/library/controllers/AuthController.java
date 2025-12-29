@@ -1,4 +1,5 @@
 package com.simplifica.library.controllers;
+import com.simplifica.library.config.authentication.CokieConfig;
 import com.simplifica.library.config.authentication.TokenConfig;
 import com.simplifica.library.dtos.user.requests.UserRequestCreateDTO;
 import com.simplifica.library.dtos.user.responses.UserResponseDTO;
@@ -29,11 +30,13 @@ public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private  final TokenConfig tokenConfig;
+    private  final CokieConfig cokieConfig;
 
-    public  AuthController(UserService userService, AuthenticationManager authenticationManager, TokenConfig tokenConfig) {
+    public  AuthController(UserService userService, AuthenticationManager authenticationManager, TokenConfig tokenConfig, CokieConfig cokieConfig ) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.tokenConfig = tokenConfig;
+        this.cokieConfig = cokieConfig;
     }
 
     @GetMapping("/authenticated")
@@ -50,22 +53,6 @@ public class AuthController {
                 .body(UserResponseDTO.fromEntity(user));
     }
 
-    @PostMapping("/logout")
-    public  ResponseEntity<Void> logout(HttpServletResponse res) {
-
-        ResponseCookie cookie = ResponseCookie.from("access_token", "")
-                          .httpOnly(true)
-                          .sameSite("None")
-                          .secure(false)
-                          .path("/")
-                          .maxAge(0)
-                          .build();
-
-        res.addHeader(HttpHeaders.SET_COOKIE,cookie.toString());
-        return  ResponseEntity.noContent().build();
-    }
-
-
     @PostMapping("/sign")
     public  ResponseEntity<UserResponseDTO> signUser(@Valid @RequestBody UserSignRequest req, HttpServletResponse res) {
         // Authenticação com email e senha.
@@ -77,14 +64,7 @@ public class AuthController {
             // gero meu token com as informações do user authenticado
             String token = tokenConfig.generateToken(user);
 
-            ResponseCookie cookie = ResponseCookie.from("access_token", token)
-                    .httpOnly(true)
-                    .secure(false)
-                    .path("/")
-                    .sameSite("None")
-                    //Deve obedecer o mesmo tempo do meu jwtToken
-                    .maxAge(Duration.ofHours(TokenConfig.getJWTExpiresHours()))
-                    .build();
+            ResponseCookie cookie = cokieConfig.generateCokie(token);
 
             res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 

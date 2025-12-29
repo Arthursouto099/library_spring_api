@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +33,27 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private  String password;
+    
+    /*
+    User possui (n) livros
+    Book possui (1) User
+     */
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Book> books = new ArrayList<>();
 
+    public void addBookToList(Book book) {
+        this.books.add(book);
+        book.setUser(this);
+    }
+
+    public void removeBookToList(Book book) {
+        this.books.remove(book);
+        book.setUser(this);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -42,7 +62,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return "";
+        return this.email;
     }
 
     @Override

@@ -42,9 +42,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configure(httpSecurity))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
+                .logout(logout -> logout
+                .logoutUrl("/logout")
+                .deleteCookies("access_token")
+                .logoutSuccessHandler((req, res, auth) -> res.setStatus(204))
+        ).authorizeHttpRequests(auth -> auth
                         .requestMatchers("/signup").permitAll()
                         .requestMatchers("/sign").permitAll()
+                        .requestMatchers("/logout").permitAll()
                         .requestMatchers("/tests/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/error").permitAll()
@@ -59,14 +64,8 @@ public class SecurityConfig {
         return  authenticationConfiguration.getAuthenticationManager();
     }
 
-
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return  new BCryptPasswordEncoder();
     }
-
-
-
-
-
 }
