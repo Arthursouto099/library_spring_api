@@ -33,7 +33,6 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private  String password;
-    
     /*
     User possui (n) livros
     Book possui (1) User
@@ -46,6 +45,10 @@ public class User implements UserDetails {
     private List<Book> books = new ArrayList<>();
 
     public void addBookToList(Book book) {
+        if (this.books == null) {
+            this.books = new ArrayList<>();
+        }
+
         this.books.add(book);
         book.setUser(this);
     }

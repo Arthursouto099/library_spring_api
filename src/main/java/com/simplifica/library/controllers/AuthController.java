@@ -45,8 +45,18 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody  UserRequestCreateDTO req) {
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody  UserRequestCreateDTO req, HttpServletResponse res) {
         User user = userService.createUser(req.toEntity());
+
+
+        UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(req.email(), req.password());
+        Authentication authentication = authenticationManager.authenticate(userAndPass);
+
+        String token = tokenConfig.generateToken((User) authentication.getPrincipal());
+
+        ResponseCookie cookie = cokieConfig.generateCokie(token);
+
+        res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         return  ResponseEntity
                 .status(HttpStatus.CREATED)

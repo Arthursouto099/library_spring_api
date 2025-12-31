@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal UserDetails principal) {
+    public ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal User principal) {
         User user = userService.findByEmail(principal.getUsername());
         return ResponseEntity.ok(UserResponseDTO.fromEntity(user));
     }

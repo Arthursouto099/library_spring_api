@@ -30,17 +30,6 @@ public class UserService {
         return  userRepository.save(user);
     }
 
-    @Transactional
-    public  User sign(String email, String password) {
-        User u = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado"));
-
-        if(!bCryptPasswordEncoder.matches(password, u.getPassword())) {
-            throw  new UnauthorizedResourceException("Senha inválida");
-        }
-
-        return u;
-    }
 
     public  User findByEmail(String email) {
         return  userRepository.findByEmail(email)
@@ -50,7 +39,7 @@ public class UserService {
 
     @Transactional
     public  User editUser(String email, UserRequestUpdateDTO req) {
-        User u = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado"));
+        User u = this.findByEmail(email);
 
         if (req.name() != null && !req.name().isBlank()) {
             u.setName(req.name().trim());
@@ -67,15 +56,9 @@ public class UserService {
         return userRepository.save(u);
     }
 
-    public  User findById(Long id) {
-        return  userRepository.findById(id)
-                .orElseThrow(() -> new ResourceAccessException("Usuario não encontrado"));
-
-    }
-
     @Transactional
     public void deleteUser(String email)  {
-        User u = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado"));
+        User u = this.findByEmail(email);
         userRepository.delete(u);
     };
 
