@@ -2,6 +2,7 @@ package com.simplifica.library.controllers;
 
 
 import com.simplifica.library.dtos.book.requests.BookCreateRequestDTO;
+import com.simplifica.library.dtos.book.requests.BookUpdateRequestDTO;
 import com.simplifica.library.dtos.book.responses.BookResponseDTO;
 import com.simplifica.library.entities.Book;
 import com.simplifica.library.entities.User;
@@ -12,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -44,7 +44,7 @@ public class BookController {
     @PatchMapping("/edit/{idBook}")
     public  ResponseEntity<BookResponseDTO> editBook(
             @AuthenticationPrincipal User user,
-            @Valid @RequestBody BookCreateRequestDTO req,
+            @Valid @RequestBody BookUpdateRequestDTO req,
             @PathVariable Long idBook
     ) {
         Book book = bookService.editBook(idBook, user.getIdUser(), req);

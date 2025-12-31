@@ -1,7 +1,7 @@
 package com.simplifica.library.services;
 
 
-import com.simplifica.library.dtos.book.requests.BookCreateRequestDTO;
+import com.simplifica.library.dtos.book.requests.BookUpdateRequestDTO;
 import com.simplifica.library.entities.Book;
 import com.simplifica.library.entities.User;
 import com.simplifica.library.exceptions.ResourceNotFoundException;
@@ -55,7 +55,7 @@ public class BookService {
 
 
     @Transactional
-    public  Book editBook(Long idBook, Long idUser, BookCreateRequestDTO req) {
+    public  Book editBook(Long idBook, Long idUser, BookUpdateRequestDTO req) {
         Book book = findByIdAndIdUser(idBook, idUser);
 
         validValue(book::setTitle, req.title());
@@ -65,6 +65,8 @@ public class BookService {
         validValue(book::setPublisher, req.publisher());
         validValue(book::setCategory, req.category());
         validValue(book::setImage, req.image());
+        validValue(book::setGender, req.gender());
+        validValue(book::setStatus, req.status());
 
         if(req.publicationDate() != null && !req.publicationDate().isAfter(LocalDate.now())) {
             book.setPublicationDate(req.publicationDate());

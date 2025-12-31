@@ -15,6 +15,8 @@ public record BookResponseDTO(
         String category,
         LocalDate publicationDate,
         String image,
+        String status,
+        String gender,
         UserSummaryDTO user
 )
 {
@@ -29,6 +31,8 @@ public record BookResponseDTO(
                 book.getCategory(),
                 book.getPublicationDate(),
                 book.getImage(),
+                book.getStatus(),
+                book.getGender(),
                 book.getUser() == null ? null : UserSummaryDTO.fromEntity(book.getUser())
         );
     }

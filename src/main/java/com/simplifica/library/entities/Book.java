@@ -46,6 +46,12 @@ public class Book {
     @Column()
     private String image;
 
+    @Column
+    private  String gender;
+
+    @Column()
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
