@@ -54,7 +54,6 @@ public class BookController {
     // futura inplementação do user na hora de deletar
     @DeleteMapping("/delete/{idBook}")
     public ResponseEntity<?> deleteBook(
-            @AuthenticationPrincipal User user,
             @PathVariable Long idBook
     ){
         bookService.deleteBook(idBook);

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Getter
@@ -62,5 +64,18 @@ public class Book {
         if(this.volume == null) this.volume = "Único";
         if(this.edition == null) this.edition = "1 edição";
         if(this.publicationDate == null) this.publicationDate = LocalDate.now();
+    }
+
+    @ManyToMany
+    @JoinTable(
+            name = "book_label",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id")
+    )
+    private Set<Label> labels = new HashSet<>();
+    
+    private void addLabel(Label label) {
+        this.labels.add(label);
+        label.getBooks().add(this);
     }
 }

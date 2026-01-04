@@ -33,6 +33,22 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private  String password;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Label> labels = new ArrayList<>();
+
+    public void addLabelToLabelList(Label label) {
+        if (this.labels == null) {
+            this.labels = new ArrayList<>();
+        }
+
+        this.labels.add(label);
+        label.setUser(this);
+    }
     /*
     User possui (n) livros
     Book possui (1) User
