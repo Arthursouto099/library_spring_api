@@ -22,7 +22,6 @@ public class LabelService {
         this.userRepository = userRepository;
     }
 
-
     @Transactional
     public Label createLabel(Label label, User user) {
         User managedUser = userRepository.getReferenceById(user.getIdUser());
@@ -48,5 +47,8 @@ public class LabelService {
         return labelRepository.findByUserIdUser(idUser);
     }
 
+    public  Label getLabelByIdLabel(Long idLabel) {
+        return  labelRepository.findById(idLabel).orElseThrow(() -> new ResourceNotFoundException("label não encontrado"));
+    }
 
 }

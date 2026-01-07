@@ -5,8 +5,10 @@ import com.simplifica.library.dtos.book.requests.BookCreateRequestDTO;
 import com.simplifica.library.dtos.book.requests.BookUpdateRequestDTO;
 import com.simplifica.library.dtos.book.responses.BookResponseDTO;
 import com.simplifica.library.entities.Book;
+import com.simplifica.library.entities.Label;
 import com.simplifica.library.entities.User;
 import com.simplifica.library.services.BookService;
+import com.simplifica.library.services.LabelService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +21,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/book/features")
 public class BookController {
     private  final  BookService bookService;
+    private final LabelService labelService;
 
-    public  BookController(BookService bookService) {
+    public  BookController(BookService bookService, LabelService labelService) {
         this.bookService = bookService;
+        this.labelService = labelService;
     }
 
     @PostMapping("/create")
@@ -39,6 +43,30 @@ public class BookController {
     ) {
         Page<Book> books = bookService.findByIdUser(user.getIdUser(), pageable);
         return ResponseEntity.ok(books.map(BookResponseDTO::fromEntity));
+    }
+
+    @PatchMapping("/add/{idLabel}/{idBook}")
+    public  ResponseEntity<BookResponseDTO> addLabel(
+            @PathVariable Long idLabel,
+            @PathVariable Long idBook
+
+    ) {
+        Label label = labelService.getLabelByIdLabel(idLabel);
+        Book book = bookService.findByIdBook(idBook);
+        Book updated = bookService.addLabel(label, book);
+        return  ResponseEntity.ok(BookResponseDTO.fromEntity(updated));
+    }
+
+    @PatchMapping("/remove/{idLabel}/{idBook}")
+    public  ResponseEntity<BookResponseDTO> removeLabel(
+            @PathVariable Long idLabel,
+            @PathVariable Long idBook
+
+    ) {
+        Label label = labelService.getLabelByIdLabel(idLabel);
+        Book book = bookService.findByIdBook(idBook);
+        Book updated = bookService.removeLabel(label, book);
+        return  ResponseEntity.ok(BookResponseDTO.fromEntity(updated));
     }
 
     @PatchMapping("/edit/{idBook}")

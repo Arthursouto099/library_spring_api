@@ -74,8 +74,13 @@ public class Book {
     )
     private Set<Label> labels = new HashSet<>();
     
-    private void addLabel(Label label) {
+    public void addLabel(Label label) {
         this.labels.add(label);
         label.getBooks().add(this);
+    }
+
+    public  void removeLabel(Label label) {
+        this.labels.remove(label);
+        label.getBooks().remove(this);
     }
 }

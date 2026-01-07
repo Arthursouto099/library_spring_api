@@ -1,9 +1,13 @@
 package com.simplifica.library.dtos.book.responses;
+import com.simplifica.library.dtos.label.LabelSummaryDTO;
 import com.simplifica.library.dtos.user.responses.UserSummaryDTO;
 import com.simplifica.library.entities.Book;
+import com.simplifica.library.entities.Label;
 
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 public record BookResponseDTO(
         Long idBook,
@@ -17,7 +21,8 @@ public record BookResponseDTO(
         String image,
         String status,
         String gender,
-        UserSummaryDTO user
+        UserSummaryDTO user,
+        List<LabelSummaryDTO> labels
 )
 {
     public static   BookResponseDTO fromEntity(Book book) {
@@ -33,7 +38,13 @@ public record BookResponseDTO(
                 book.getImage(),
                 book.getStatus(),
                 book.getGender(),
-                book.getUser() == null ? null : UserSummaryDTO.fromEntity(book.getUser())
+                book.getUser() == null ? null : UserSummaryDTO.fromEntity(book.getUser()),
+                book.getLabels() == null ?
+                        List.of() :
+                        book.getLabels()
+                                .stream()
+                                .map(LabelSummaryDTO::fromEntity)
+                                .toList()
         );
     }
 }

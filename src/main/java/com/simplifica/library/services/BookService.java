@@ -3,6 +3,7 @@ package com.simplifica.library.services;
 
 import com.simplifica.library.dtos.book.requests.BookUpdateRequestDTO;
 import com.simplifica.library.entities.Book;
+import com.simplifica.library.entities.Label;
 import com.simplifica.library.entities.User;
 import com.simplifica.library.exceptions.ResourceNotFoundException;
 import com.simplifica.library.repositories.BookRepository;
@@ -46,6 +47,17 @@ public class BookService {
         return  book;
     }
 
+    @Transactional
+    public  Book addLabel(Label label, Book book) {
+        book.addLabel(label);
+        return  bookRepository.save(book);
+    }
+
+    @Transactional
+    public  Book removeLabel(Label label, Book book) {
+        book.removeLabel(label);
+        return  bookRepository.save(book);
+    }
 
     private void validValue(Consumer<String> setter, String value) {
         if(value != null && !value.isBlank()) {
