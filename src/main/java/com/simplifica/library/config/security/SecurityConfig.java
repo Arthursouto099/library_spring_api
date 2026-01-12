@@ -74,7 +74,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setExposedHeaders(List.of("Set-Cookie"));
-        config.setAllowedOrigins(List.of( "https://seu-front.onrender.com", "http://localhost:5173"));
+        config.setAllowedOrigins(List.of( "library-project-henna-two.vercel.app", "http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // 🔥 ESSENCIAL para cookies
