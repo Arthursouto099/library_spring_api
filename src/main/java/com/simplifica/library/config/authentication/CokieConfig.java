@@ -13,10 +13,9 @@ public class CokieConfig {
 
     public ResponseCookie generateCokie(String token) {
         return ResponseCookie.from(COKIE_KEY, token)
+                .secure(true)
                 .httpOnly(true)
-                .secure(false)
-                .httpOnly(true)
-                .sameSite("Lax")
+                .sameSite("None")
                 .path("/")
                 .maxAge(Duration.ofHours(TokenConfig.getJWTExpiresHours()))
                 .build();
